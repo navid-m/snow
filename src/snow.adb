@@ -1,45 +1,39 @@
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
-with Ada.Text_IO;           use Ada.Text_IO;
+with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
+with Ada.Text_IO;
 with Ada.Strings.Fixed;
 with Interfaces;
 with Interfaces.C;
 with System;                use System;
 
 package body Snow is
-
-   -- Windows API for console UTF-8 support
    procedure Initialize_Console is
       use Interfaces.C;
 
       subtype UINT  is unsigned;
       subtype BOOL  is int;
       subtype DWORD is unsigned_long;
-
       subtype HANDLE is System.Address;
 
       function SetConsoleOutputCP (CodePage : UINT) return BOOL
-        with Import => True,
-             Convention => Stdcall,
-             External_Name => "SetConsoleOutputCP";
+      with Import => True, Convention => Stdcall,
+            External_Name => "SetConsoleOutputCP";
+
+      function SetConsoleCP (CodePage : UINT) return BOOL
+      with Import => True, Convention => Stdcall,
+            External_Name => "SetConsoleCP";
 
       function GetStdHandle (nStdHandle : Interfaces.C.long) return HANDLE
-        with Import => True,
-             Convention => Stdcall,
-             External_Name => "GetStdHandle";
+      with Import => True, Convention => Stdcall,
+            External_Name => "GetStdHandle";
 
-      function SetConsoleMode
-        (hConsoleHandle : HANDLE;
-         dwMode          : DWORD) return BOOL
-        with Import => True,
-             Convention => Stdcall,
-             External_Name => "SetConsoleMode";
+      function SetConsoleMode (hConsoleHandle : HANDLE; dwMode : DWORD) return BOOL
+      with Import => True, Convention => Stdcall,
+            External_Name => "SetConsoleMode";
 
-      function GetConsoleMode
-        (hConsoleHandle : HANDLE;
-         lpMode          : access DWORD) return BOOL
-        with Import => True,
-             Convention => Stdcall,
-             External_Name => "GetConsoleMode";
+      function GetConsoleMode (hConsoleHandle : HANDLE; lpMode : access DWORD) return BOOL
+      with Import => True, Convention => Stdcall,
+            External_Name => "GetConsoleMode";
 
       STD_OUTPUT_HANDLE : constant Interfaces.C.long := -11;
       ENABLE_VIRTUAL_TERMINAL_PROCESSING : constant DWORD := 16#0004#;
@@ -47,16 +41,17 @@ package body Snow is
 
       Console_Handle : constant HANDLE := GetStdHandle (STD_OUTPUT_HANDLE);
       Console_Mode : aliased DWORD := 0;
-      Nil : BOOL := 0;
+      Result : BOOL;
    begin
-      -- Set UTF-8 code page
-      Nil := SetConsoleOutputCP (CP_UTF8);
+      -- Set both input and output to UTF-8
+      Result := SetConsoleCP (CP_UTF8);
+      Result := SetConsoleOutputCP (CP_UTF8);
 
-      -- Enable virtual terminal processing for ANSI escape sequences
+      -- Enable virtual terminal processing
       if Console_Handle /= System.Null_Address then
          if GetConsoleMode (Console_Handle, Console_Mode'Access) /= 0 then
             Console_Mode := Console_Mode or ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-            Nil := SetConsoleMode (Console_Handle, Console_Mode);
+            Result := SetConsoleMode (Console_Handle, Console_Mode);
          end if;
       end if;
    end Initialize_Console;
@@ -154,9 +149,9 @@ package body Snow is
       Line : constant String := (1 .. Line_Length => '=');
    begin
       New_Line;
-      Put_Line (Bold & Cyan & Line & Reset);
-      Put_Line (Bold & Cyan & "  " & Content & "  " & Reset);
-      Put_Line (Bold & Cyan & Line & Reset);
+      Ada.Text_IO.Put_Line (Bold & Cyan & Line & Reset);
+      Ada.Text_IO.Put_Line (Bold & Cyan & "  " & Content & "  " & Reset);
+      Ada.Text_IO.Put_Line (Bold & Cyan & Line & Reset);
       New_Line;
    end Print_Title;
 
@@ -193,7 +188,7 @@ package body Snow is
             Prefix := To_Unbounded_String ("ERROR");
       end case;
 
-      Put_Line (To_String (Color) & Bold & To_UTF8 (Icon) & "[" &
+      Ada.Text_IO.Put_Line (To_String (Color) & Bold & To_UTF8 (Icon) & "[" &
                 To_String (Prefix) & "]" & Reset & " " & Message);
    end Toast;
 
@@ -227,9 +222,9 @@ package body Snow is
       end loop;
 
       if Depth = 0 then
-         Put_Line (Bold & Green & Label & Reset);
+         Ada.Text_IO.Put_Line (Bold & Green & Label & Reset);
       else
-         Put_Line (To_String (Indent) & Label);
+         Ada.Text_IO.Put_Line (To_String (Indent) & Label);
       end if;
    end Print_Tree_Node;
 
@@ -355,20 +350,20 @@ package body Snow is
       end loop;
 
       -- Print top border
-      Put (To_UTF8 (Box_Top_Left));
+      Put (Box_Top_Left);
       for I in Col_Widths'Range loop
          for J in 1 .. Col_Widths (I) + 2 loop
-            Put (To_UTF8 (Box_Horizontal));
+            Put (Box_Horizontal);
          end loop;
          if I < Col_Widths'Last then
-            Put (To_UTF8 (Box_T_Down));
+            Put (Box_T_Down);
          end if;
       end loop;
-      Put_Line (To_UTF8 (Box_Top_Right));
+      Put_Line (Box_Top_Right);
 
       -- Print header if exists
       if T.Has_Header then
-         Put (To_UTF8 (Box_Vertical));
+         Put (Box_Vertical);
          for I in 0 .. Natural (T.Headers.Length) - 1 loop
             declare
                Header : constant String := To_String (T.Headers.Element (I));
@@ -378,28 +373,28 @@ package body Snow is
                Padded : constant String :=
                  Pad_String (Header, Col_Widths (I), Align);
             begin
-               Put (" " & Bold & Padded & Reset & " ");
-               Put (To_UTF8 (Box_Vertical));
+               Ada.Text_IO.Put (" " & Bold & Padded & Reset & " ");
+               Put (Box_Vertical);
             end;
          end loop;
          New_Line;
 
          -- Print separator after header
-         Put (To_UTF8 (Box_T_Right));
+         Put (Box_T_Right);
          for I in Col_Widths'Range loop
             for J in 1 .. Col_Widths (I) + 2 loop
-               Put (To_UTF8 (Box_Horizontal));
+               Put (Box_Horizontal);
             end loop;
             if I < Col_Widths'Last then
-               Put (To_UTF8 (Box_Cross));
+               Put (Box_Cross);
             end if;
          end loop;
-         Put_Line (To_UTF8 (Box_T_Left));
+         Put_Line (Box_T_Left);
       end if;
 
       -- Print rows
       for Row of T.Rows loop
-         Put (To_UTF8 (Box_Vertical));
+         Put (Box_Vertical);
          for I in 0 .. Col_Count - 1 loop
             declare
                Cell : constant String :=
@@ -411,24 +406,24 @@ package body Snow is
                Padded : constant String :=
                  Pad_String (Cell, Col_Widths (I), Align);
             begin
-               Put (" " & Padded & " ");
-               Put (To_UTF8 (Box_Vertical));
+               Ada.Text_IO.Put (" " & Padded & " ");
+               Put (Box_Vertical);
             end;
          end loop;
          New_Line;
       end loop;
 
       -- Print bottom border
-      Put (To_UTF8 (Box_Bottom_Left));
+      Put (Box_Bottom_Left);
       for I in Col_Widths'Range loop
          for J in 1 .. Col_Widths (I) + 2 loop
-            Put (To_UTF8 (Box_Horizontal));
+            Put (Box_Horizontal);
          end loop;
          if I < Col_Widths'Last then
-            Put (To_UTF8 (Box_T_Up));
+            Put (Box_T_Up);
          end if;
       end loop;
-      Put_Line (To_UTF8 (Box_Bottom_Right));
+      Put_Line (Box_Bottom_Right);
 
    end Print;
 
