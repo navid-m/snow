@@ -13,7 +13,7 @@ project Snow_Demo is
    for Main use ("snow_demo.adb");
 
    package Compiler is
-      Common_Switches := Snow_Config.Ada_Compiler_Switches;
+      Common_Switches := Snow_Config.Ada_Compiler_Switches & ("-Os", "-g0");
       
       case Target_OS is
          when "Windows" =>
@@ -24,7 +24,11 @@ project Snow_Demo is
    end Compiler;
 
    package Binder is
-      for Switches ("Ada") use ("-Es"); --  Symbolic traceback
+      for Switches ("Ada") use ("-Es");
    end Binder;
+
+   package Linker is
+      for Default_Switches ("Ada") use ("-s", "-Wl,--gc-sections");
+   end Linker;
 
 end Snow_Demo;

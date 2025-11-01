@@ -10,7 +10,7 @@ project Snow is
      external ("SNOW_LIBRARY_TYPE", external ("LIBRARY_TYPE", "static"));
    
    type OS_Type is ("Windows", "Unix");
-   -- Auto-detect OS: Windows sets OS=Windows_NT, Unix systems typically don't set OS
+
    Detected_OS : OS_Type := external ("TARGET_OS", "Unix");
    Target_OS : OS_Type := Detected_OS;
 
@@ -30,7 +30,7 @@ project Snow is
    end case;
 
    package Compiler is
-      Common_Switches := Snow_Config.Ada_Compiler_Switches;
+      Common_Switches := Snow_Config.Ada_Compiler_Switches & ("-Os", "-g0");
       
       case Target_OS is
          when "Windows" =>
@@ -40,8 +40,12 @@ project Snow is
       end case;
    end Compiler;
 
+   package Linker is
+      for Default_Switches ("Ada") use ("-s", "-Wl,--gc-sections");
+   end Linker;
+
    package Binder is
-      for Switches ("Ada") use ("-Es"); --  Symbolic traceback
+      for Switches ("Ada") use ("-Es");
    end Binder;
 
    package Install is
