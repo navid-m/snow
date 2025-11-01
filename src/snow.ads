@@ -23,7 +23,6 @@ package Snow is
    procedure Print_Title (Content : String);
    procedure Toast (Message : String; Level : Toast_Level := Info);
    procedure Toast (Message : Unbounded_String; Level : Toast_Level := Info);
-
    procedure Print_Tree_Node
      (Label : String; Depth : Natural := 0; Is_Last : Boolean := True);
    procedure Print_Tree_Node
@@ -55,12 +54,12 @@ package Snow is
    procedure Set_Width (Spark : in out Sparkline; Width : Natural);
 
    function Get_String (Spark : Sparkline) return Wide_Wide_String;
-   
+
    procedure Print (Spark : Sparkline);
    procedure Clear (Spark : in out Sparkline);
-
    procedure Print_Bounding_Box (Content : String; Title : String := "");
-   procedure Print_Bounding_Box (Content : Unbounded_String; Title : String := "");
+   procedure Print_Bounding_Box
+     (Content : Unbounded_String; Title : String := "");
 
    function Make_Vector (Items : String) return String_Vectors.Vector;
    function "&"
@@ -99,5 +98,4 @@ private
       Max_Value : Natural := 0;
       Width     : Natural := 20;
    end record;
-
 end Snow;
