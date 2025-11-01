@@ -4,6 +4,7 @@ with System;                use System;
 with Ada.Text_IO;
 with Ada.Strings.Fixed;
 with Interfaces;
+
 #if Windows then
 with Interfaces.C;
 #end if;
@@ -95,52 +96,6 @@ package body Snow is
    Tree_Last_Branch : constant Wide_Wide_String := "└── ";
    Tree_Vertical    : constant Wide_Wide_String := "│   ";
    Tree_Space       : constant Wide_Wide_String := "    ";
-
-   function To_UTF8 (S : Wide_Wide_String) return String is
-      use Interfaces;
-      Result : String (1 .. S'Length * 4);
-      Last   : Natural := 0;
-   begin
-      for I in S'Range loop
-         declare
-            Code : constant Wide_Wide_Character := S (I);
-            Val  : constant Unsigned_32 :=
-              Unsigned_32 (Wide_Wide_Character'Pos (Code));
-         begin
-            if Val < 16#80# then
-               Last := Last + 1;
-               Result (Last) := Character'Val (Val);
-            elsif Val < 16#800# then
-               Last := Last + 1;
-               Result (Last) := Character'Val (16#C0# or Shift_Right (Val, 6));
-               Last := Last + 1;
-               Result (Last) := Character'Val (16#80# or (Val and 16#3F#));
-            elsif Val < 16#10000# then
-               Last := Last + 1;
-               Result (Last) :=
-                 Character'Val (16#E0# or Shift_Right (Val, 12));
-               Last := Last + 1;
-               Result (Last) :=
-                 Character'Val (16#80# or (Shift_Right (Val, 6) and 16#3F#));
-               Last := Last + 1;
-               Result (Last) := Character'Val (16#80# or (Val and 16#3F#));
-            else
-               Last := Last + 1;
-               Result (Last) :=
-                 Character'Val (16#F0# or Shift_Right (Val, 18));
-               Last := Last + 1;
-               Result (Last) :=
-                 Character'Val (16#80# or (Shift_Right (Val, 12) and 16#3F#));
-               Last := Last + 1;
-               Result (Last) :=
-                 Character'Val (16#80# or (Shift_Right (Val, 6) and 16#3F#));
-               Last := Last + 1;
-               Result (Last) := Character'Val (16#80# or (Val and 16#3F#));
-            end if;
-         end;
-      end loop;
-      return Result (1 .. Last);
-   end To_UTF8;
 
    function To_Wide_Wide_String (S : String) return Wide_Wide_String is
       Result : Wide_Wide_String (S'Range);
@@ -461,10 +416,17 @@ package body Snow is
       Bar_Width : constant Natural := 30;
       Bar_Char  : constant Wide_Wide_Character := '█';
       Scale     : Float;
+      Max_Label_Length : Natural := 0;
    begin
       if Chart.Data.Is_Empty then
          return;
       end if;
+      
+      for Point of Chart.Data loop
+         if Length(Point.Label) > Max_Label_Length then
+            Max_Label_Length := Length(Point.Label);
+         end if;
+      end loop;
       
       if Chart.Max_Value = 0 then
          Scale := 0.0;
@@ -473,7 +435,9 @@ package body Snow is
       end if;
       
       if Chart.Title /= Null_Unbounded_String then
-         Put_Line(To_Wide_Wide_String(Bold & Cyan & To_String(Chart.Title) & Reset));
+         Put_Line(To_Wide_Wide_String(Bold) & To_Wide_Wide_String(Cyan) & 
+                  To_Wide_Wide_String(To_String(Chart.Title)) & 
+                  To_Wide_Wide_String(Reset));
          New_Line;
       end if;
       
@@ -481,12 +445,15 @@ package body Snow is
          declare
             Bar_Length : constant Natural := 
               Natural(Float(Point.Value) * Scale);
+            Padded_Label : constant String := 
+              To_String(Point.Label) & 
+              (1 .. Max_Label_Length - Length(Point.Label) => ' ');
             Bar : constant Wide_Wide_String := 
               (for I in 1 .. Bar_Length => Bar_Char) & 
               To_Wide_Wide_String(" " & Natural'Image(Point.Value));
          begin
             Put_Line(
-              To_Wide_Wide_String(To_String(Point.Label) & ": ") & 
+              To_Wide_Wide_String(Padded_Label & ": ") & 
               To_Wide_Wide_String(Green) & Bar & To_Wide_Wide_String(Reset));
          end;
       end loop;
