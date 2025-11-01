@@ -14,7 +14,6 @@ project Snow_Demo is
 
    package Compiler is
       Common_Switches := Snow_Config.Ada_Compiler_Switches & ("-Os", "-g0");
-      
       case Target_OS is
          when "Windows_NT" =>
             for Default_Switches ("Ada") use Common_Switches & ("-gnatep=platform_windows.def");
