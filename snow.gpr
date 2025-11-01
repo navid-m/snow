@@ -30,7 +30,7 @@ project Snow is
    end case;
 
    package Compiler is
-      Common_Switches := Snow_Config.Ada_Compiler_Switches & ("-Os", "-g0");
+      Common_Switches := Snow_Config.Ada_Compiler_Switches & ("-Os", "-g0", "-gnat2022");
       
       case Target_OS is
          when "Windows" =>

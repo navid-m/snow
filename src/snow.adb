@@ -432,4 +432,62 @@ package body Snow is
       return Result;
    end "&";
 
+   procedure Add_Data_Series 
+     (Chart : in out Bar_Chart; 
+      Label : String; 
+      Value : Natural) is
+   begin
+      Chart.Data.Append (Data_Point'(To_Unbounded_String(Label), Value));
+      if Value > Chart.Max_Value then
+         Chart.Max_Value := Value;
+      end if;
+   end Add_Data_Series;
+   
+   procedure Set_Title (Chart : in out Bar_Chart; Title : String) is
+   begin
+      Chart.Title := To_Unbounded_String(Title);
+   end Set_Title;
+   
+   procedure Print (Chart : Bar_Chart) is
+      Bar_Width : constant Natural := 30;
+      Bar_Char  : constant Wide_Wide_Character := '█';
+      Scale     : Float;
+   begin
+      if Chart.Data.Is_Empty then
+         return;
+      end if;
+      
+      if Chart.Max_Value = 0 then
+         Scale := 0.0;
+      else
+         Scale := Float(Bar_Width) / Float(Chart.Max_Value);
+      end if;
+      
+      if Chart.Title /= Null_Unbounded_String then
+         Ada.Text_IO.Put_Line(Bold & Cyan & To_String(Chart.Title) & Reset);
+         Ada.Text_IO.Put_Line("");
+      end if;
+      
+      for Point of Chart.Data loop
+         declare
+            Bar_Length : constant Natural := 
+              Natural(Float(Point.Value) * Scale);
+            Bar : constant String := 
+              To_UTF8((for I in 1 .. Bar_Length => Bar_Char)) & 
+              " " & Natural'Image(Point.Value);
+         begin
+            Ada.Text_IO.Put_Line(
+              To_String(Point.Label) & ": " & 
+              Green & Bar & Reset);
+         end;
+      end loop;
+   end Print;
+   
+   procedure Clear (Chart : in out Bar_Chart) is
+   begin
+      Chart.Title := Null_Unbounded_String;
+      Chart.Data.Clear;
+      Chart.Max_Value := 0;
+   end Clear;
+
 end Snow;

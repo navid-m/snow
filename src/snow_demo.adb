@@ -81,6 +81,20 @@ begin
    Print (My_Table);
    New_Line;
 
+   Print_Title ("Bar Chart Example");
+   declare
+      Chart : Snow.Bar_Chart;
+   begin
+      Set_Title (Chart, "Monthly Sales");
+      Add_Data_Series (Chart, "January", 12000);
+      Add_Data_Series (Chart, "February", 18000);
+      Add_Data_Series (Chart, "March", 15000);
+      Add_Data_Series (Chart, "April", 21000);
+      Add_Data_Series (Chart, "May", 19000);
+      Print (Chart);
+   end;
+   New_Line;
+
    Toast ("Demo completed successfully!", Success);
 
 end Snow_Demo;
