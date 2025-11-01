@@ -59,6 +59,9 @@ package Snow is
    procedure Print (Spark : Sparkline);
    procedure Clear (Spark : in out Sparkline);
 
+   procedure Print_Bounding_Box (Content : String; Title : String := "");
+   procedure Print_Bounding_Box (Content : Unbounded_String; Title : String := "");
+
    function Make_Vector (Items : String) return String_Vectors.Vector;
    function "&"
      (Left : String_Vectors.Vector; Right : String)

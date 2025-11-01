@@ -534,4 +534,76 @@ package body Snow is
       Put_Line(Get_String(Spark));
    end Print;
 
+   procedure Print_Bounding_Box (Content : String; Title : String := "") is
+      Max_Width : constant Natural := 80;
+      Content_Width : Natural := Content'Length;
+      Title_Width : Natural := Title'Length;
+      Box_Width : Natural;
+      Padding : Natural;
+   begin
+      Box_Width := Natural'Max(Content_Width, Title_Width) + 2;
+      Box_Width := Natural'Min(Box_Width, Max_Width - 2);
+      
+      Put (Box_Top_Left);
+      for I in 1 .. Box_Width + 2 loop
+         Put (Box_Horizontal);
+      end loop;
+      Put_Line (Box_Top_Right);
+      
+      if Title'Length > 0 then
+         Put (Box_Vertical & " ");
+         Ada.Text_IO.Put (Bold & Cyan & Title & Reset);
+         Padding := Box_Width - Title'Length;
+         for I in 1 .. Padding loop
+            Put (" ");
+         end loop;
+         Put_Line (" " & Box_Vertical);
+         
+         Put (Box_T_Right);
+         for I in 1 .. Box_Width + 2 loop
+            Put (Box_Horizontal);
+         end loop;
+         Put_Line (Box_T_Left);
+      end if;
+      
+      declare
+         Lines : String_Vectors.Vector;
+         Current_Line : Unbounded_String;
+      begin
+         for C of Content loop
+            if C = ASCII.LF or else Length(Current_Line) = Box_Width then
+               Lines.Append(Current_Line);
+               Current_Line := Null_Unbounded_String;
+            elsif C /= ASCII.CR then
+               Append(Current_Line, C);
+            end if;
+         end loop;
+         
+         if Length(Current_Line) > 0 then
+            Lines.Append(Current_Line);
+         end if;
+         
+         for Line of Lines loop
+            Put (Box_Vertical & " ");
+            Put (To_Wide_Wide_String(To_String(Line)));
+            Padding := Box_Width - Length(Line);
+            for I in 1 .. Padding loop
+               Put (" ");
+            end loop;
+            Put_Line (" " & Box_Vertical);
+         end loop;
+      end;
+      
+      Put (Box_Bottom_Left);
+      for I in 1 .. Box_Width + 2 loop
+         Put (Box_Horizontal);
+      end loop;
+      Put_Line (Box_Bottom_Right);
+   end Print_Bounding_Box;
+   
+   procedure Print_Bounding_Box (Content : Unbounded_String; Title : String := "") is
+   begin
+      Print_Bounding_Box (To_String(Content), Title);
+   end Print_Bounding_Box;
+   
 end Snow;

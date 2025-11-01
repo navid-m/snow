@@ -110,6 +110,17 @@ begin
    end;
    New_Line;
 
+   Print_Title ("Bounding Box Example");
+   Print_Bounding_Box ("This is a simple message inside a bounding box");
+   New_Line;
+   
+   Print_Bounding_Box 
+     ("This is a multiline message" &
+      " inside a fancy bounding box" &
+      "with automatic line wrapping", 
+      "Important Notice");
+   New_Line;
+
    Toast ("Demo completed successfully!", Success);
 
 end Snow_Demo;
