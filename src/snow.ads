@@ -42,10 +42,8 @@ package Snow is
 
    type Bar_Chart is tagged private;
 
-   procedure Add_Data_Series 
-     (Chart : in out Bar_Chart; 
-      Label : String; 
-      Value : Natural);
+   procedure Add_Data_Series
+     (Chart : in out Bar_Chart; Label : String; Value : Natural);
    procedure Set_Title (Chart : in out Bar_Chart; Title : String);
    procedure Print (Chart : Bar_Chart);
    procedure Clear (Chart : in out Bar_Chart);
@@ -70,15 +68,15 @@ private
       Label : Unbounded_String;
       Value : Natural;
    end record;
-   
+
    package Data_Vectors is new
      Ada.Containers.Vectors
        (Index_Type   => Natural,
         Element_Type => Data_Point);
-   
+
    type Bar_Chart is tagged record
-      Title  : Unbounded_String;
-      Data   : Data_Vectors.Vector;
+      Title     : Unbounded_String;
+      Data      : Data_Vectors.Vector;
       Max_Value : Natural := 0;
    end record;
 
