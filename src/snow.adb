@@ -175,11 +175,9 @@ package body Snow is
       for I in 1 .. Depth loop
          if I < Depth then
             Put (Tree_Vertical);
-
          else
             if Is_Last then
                Put (Tree_Last_Branch);
-
             else
                Put (Tree_Branch);
             end if;
