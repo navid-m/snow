@@ -371,7 +371,6 @@ package body Snow is
          end if;
       end loop;
       Put_Line (Box_Bottom_Right);
-
    end Print;
 
    function Make_Vector (Items : String) return String_Vectors.Vector is
