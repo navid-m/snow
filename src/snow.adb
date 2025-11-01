@@ -319,10 +319,7 @@ package body Snow is
          for I in 0 .. Natural (T.Headers.Length) - 1 loop
             declare
                Header : constant String := To_String (T.Headers.Element (I));
-               Align  : constant Alignment :=
-                 (if T.Alignments /= null and then I in T.Alignments'Range
-                  then T.Alignments (I)
-                  else Left);
+               Align  : constant Alignment := Left;
                Padded : constant String :=
                  Pad_String (Header, Col_Widths (I), Align);
             begin
@@ -352,10 +349,7 @@ package body Snow is
                  (if I < Natural (Row.Length)
                   then To_String (Row.Element (I))
                   else "");
-               Align  : constant Alignment :=
-                 (if T.Alignments /= null and then I in T.Alignments'Range
-                  then T.Alignments (I)
-                  else Left);
+               Align  : constant Alignment := Left;
                Padded : constant String :=
                  Pad_String (Cell, Col_Widths (I), Align);
             begin
@@ -454,7 +448,8 @@ package body Snow is
          begin
             Put_Line(
               To_Wide_Wide_String(Padded_Label & "| ") & 
-              To_Wide_Wide_String(Green) & Bar & To_Wide_Wide_String(Reset));
+              To_Wide_Wide_String(Green) & Bar & To_Wide_Wide_String(Reset)
+            );
          end;
       end loop;
    end Print;
