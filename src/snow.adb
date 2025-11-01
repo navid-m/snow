@@ -1,7 +1,7 @@
-with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
-with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
-with Ada.Strings.Wide_Wide_Unbounded; use Ada.Strings.Wide_Wide_Unbounded;
-with System;                use System;
+with Ada.Strings.Unbounded;            use Ada.Strings.Unbounded;
+with Ada.Wide_Wide_Text_IO;            use Ada.Wide_Wide_Text_IO;
+with Ada.Strings.Wide_Wide_Unbounded;  use Ada.Strings.Wide_Wide_Unbounded;
+with System;                           use System;
 with Ada.Text_IO;
 with Ada.Strings.Fixed;
 with Interfaces;
