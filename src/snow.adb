@@ -197,37 +197,37 @@ package body Snow is
    ----------------------
 
    procedure Print_Tree_Node
-     (Label : Unbounded_String; Depth : Natural := 0; Is_Last : Boolean := True)
+   (Label : Unbounded_String; Depth : Natural := 0; Is_Last : Boolean := True)
    is
    begin
       Print_Tree_Node (To_String (Label), Depth, Is_Last);
    end Print_Tree_Node;
 
    procedure Print_Tree_Node
-     (Label : String; Depth : Natural := 0; Is_Last : Boolean := True)
+   (Label : String; Depth : Natural := 0; Is_Last : Boolean := True)
    is
-      Indent : Unbounded_String := To_Unbounded_String ("");
    begin
       -- Build indentation based on depth
       for I in 1 .. Depth loop
          if I < Depth then
-            Append (Indent, To_UTF8 (Tree_Vertical));
+            Put (Tree_Vertical);  -- Use Wide_Wide_Text_IO.Put directly
          else
             if Is_Last then
-               Append (Indent, To_UTF8 (Tree_Last_Branch));
+               Put (Tree_Last_Branch);  -- Use Wide_Wide_Text_IO.Put directly
             else
-               Append (Indent, To_UTF8 (Tree_Branch));
+               Put (Tree_Branch);  -- Use Wide_Wide_Text_IO.Put directly
             end if;
          end if;
       end loop;
 
       if Depth = 0 then
+         -- For root node with color codes, use Ada.Text_IO
          Ada.Text_IO.Put_Line (Bold & Green & Label & Reset);
       else
-         Ada.Text_IO.Put_Line (To_String (Indent) & Label);
+         -- For child nodes, use Ada.Text_IO for the label (no Unicode in it)
+         Ada.Text_IO.Put_Line (Label);
       end if;
    end Print_Tree_Node;
-
    ----------------------
    -- Table Operations
    ----------------------
