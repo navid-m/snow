@@ -3,7 +3,8 @@ description = "Console output utilities"
 version = "1.0.0"
 
 authors = ["Navid M"]
-maintainers = ["Navid M <example@example.com>"]
+maintainers = ["Navid M <navidm@navidm.com>"]
+maintainers-logins = ["navidm"]
 licenses = "GPL-3.0-only"
 website = "https://github.com/navid-m/snow"
-tags = []
+tags = ["cli", "console", "output", "utilities"]
