@@ -57,6 +57,21 @@ begin
    Print (My_Table);
    New_Line;
 
+   Print_Title ("Sparkline Example");
+   declare
+      Spark : Snow.Sparkline;
+   begin
+      Add_Data_Point (Spark, 5);
+      Add_Data_Point (Spark, 8);
+      Add_Data_Point (Spark, 12);
+      Add_Data_Point (Spark, 7);
+      Add_Data_Point (Spark, 15);
+      Add_Data_Point (Spark, 10);
+      Add_Data_Point (Spark, 3);
+      Add_Data_Point (Spark, 9);
+      Print (Spark);
+   end;
+
    Print_Title ("Table Example - Project Status");
    Clear (My_Table);
 

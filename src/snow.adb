@@ -1,5 +1,6 @@
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
+with Ada.Strings.Wide_Wide_Unbounded; use Ada.Strings.Wide_Wide_Unbounded;
 with System;                use System;
 with Ada.Text_IO;
 with Ada.Strings.Fixed;
@@ -460,5 +461,77 @@ package body Snow is
       Chart.Data.Clear;
       Chart.Max_Value := 0;
    end Clear;
+
+   procedure Add_Data_Series (Spark : in out Sparkline; Value : Natural) is
+   begin
+      Add_Data_Point(Spark, Value);
+   end Add_Data_Series;
+
+   procedure Add_Data_Point (Spark : in out Sparkline; Value : Natural) is
+   begin
+      Spark.Data.Append (Data_Point'(Null_Unbounded_String, Value));
+      if Value > Spark.Max_Value then
+         Spark.Max_Value := Value;
+      end if;
+   end Add_Data_Point;
+
+   procedure Set_Width (Spark : in out Sparkline; Width : Natural) is
+   begin
+      Spark.Width := Width;
+   end Set_Width;
+
+   procedure Clear (Spark : in out Sparkline) is
+   begin
+      Spark.Data.Clear;
+      Spark.Max_Value := 0;
+      Spark.Width := 20;
+   end Clear;
+
+   function Get_String (Spark : Sparkline) return Wide_Wide_String is
+      Spark_Chars : constant Wide_Wide_String := "▁▂▃▄▅▆▇█";
+      Scale       : Float;
+      Result      : Unbounded_Wide_Wide_String := Null_Unbounded_Wide_Wide_String;
+   begin
+      if Spark.Data.Is_Empty then
+         return "";
+      end if;
+
+      if Spark.Max_Value = 0 then
+         Scale := 0.0;
+      else
+         Scale := Float(Spark_Chars'Length - 1) / Float(Spark.Max_Value);
+      end if;
+
+      for Point of Spark.Data loop
+         if Point.Value = 0 then
+            Append(Result, ' ');
+         else
+            declare
+               Index : constant Natural := 
+                 1 + Natural'Min(
+                   Spark_Chars'Length - 1,
+                   Natural(Float(Point.Value) * Scale)
+                 );
+            begin
+               Append(Result, Spark_Chars(Index));
+            end;
+         end if;
+      end loop;
+
+      declare
+         Result_Str : constant Wide_Wide_String := To_Wide_Wide_String(Result);
+      begin
+         if Result_Str'Length > Spark.Width then
+            return Result_Str (Result_Str'First .. Spark.Width);
+         else
+            return Result_Str & (1 .. Spark.Width - Result_Str'Length => ' ');
+         end if;
+      end;
+   end Get_String;
+
+   procedure Print (Spark : Sparkline) is
+   begin
+      Put_Line(Get_String(Spark));
+   end Print;
 
 end Snow;

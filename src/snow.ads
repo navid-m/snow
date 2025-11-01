@@ -48,6 +48,17 @@ package Snow is
    procedure Print (Chart : Bar_Chart);
    procedure Clear (Chart : in out Bar_Chart);
 
+   type Sparkline is tagged private;
+
+   procedure Add_Data_Series (Spark : in out Sparkline; Value : Natural);
+   procedure Add_Data_Point (Spark : in out Sparkline; Value : Natural);
+   procedure Set_Width (Spark : in out Sparkline; Width : Natural);
+
+   function Get_String (Spark : Sparkline) return Wide_Wide_String;
+   
+   procedure Print (Spark : Sparkline);
+   procedure Clear (Spark : in out Sparkline);
+
    function Make_Vector (Items : String) return String_Vectors.Vector;
    function "&"
      (Left : String_Vectors.Vector; Right : String)
@@ -78,6 +89,12 @@ private
       Title     : Unbounded_String;
       Data      : Data_Vectors.Vector;
       Max_Value : Natural := 0;
+   end record;
+
+   type Sparkline is tagged record
+      Data      : Data_Vectors.Vector;
+      Max_Value : Natural := 0;
+      Width     : Natural := 20;
    end record;
 
 end Snow;
