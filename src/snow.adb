@@ -453,7 +453,7 @@ package body Snow is
               To_Wide_Wide_String(" " & Natural'Image(Point.Value));
          begin
             Put_Line(
-              To_Wide_Wide_String(Padded_Label & ": ") & 
+              To_Wide_Wide_String(Padded_Label & "| ") & 
               To_Wide_Wide_String(Green) & Bar & To_Wide_Wide_String(Reset));
          end;
       end loop;
