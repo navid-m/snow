@@ -1,10 +1,10 @@
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
+with System;                use System;
 with Ada.Text_IO;
 with Ada.Strings.Fixed;
 with Interfaces;
 with Interfaces.C;
-with System;                use System;
 
 package body Snow is
    procedure Initialize_Console is
@@ -191,10 +191,6 @@ package body Snow is
       Ada.Text_IO.Put_Line (To_String (Color) & Bold & To_UTF8 (Icon) & "[" &
                 To_String (Prefix) & "]" & Reset & " " & Message);
    end Toast;
-
-   ----------------------
-   -- Print_Tree_Node
-   ----------------------
 
    procedure Print_Tree_Node
    (Label : Unbounded_String; Depth : Natural := 0; Is_Last : Boolean := True)
