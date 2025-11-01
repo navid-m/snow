@@ -183,16 +183,10 @@ package body Snow is
             Prefix := To_Unbounded_String ("ERROR");
       end case;
 
+      Ada.Text_IO.Put (To_String (Color) & Bold);
+      Put (Icon);
       Ada.Text_IO.Put_Line
-        (To_String (Color)
-         & Bold
-         & To_UTF8 (Icon)
-         & "["
-         & To_String (Prefix)
-         & "]"
-         & Reset
-         & " "
-         & Message);
+        ("[" & To_String (Prefix) & "]" & Reset & " " & Message);
    end Toast;
 
    procedure Print_Tree_Node
