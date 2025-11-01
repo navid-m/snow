@@ -142,6 +142,15 @@ package body Snow is
       return Result (1 .. Last);
    end To_UTF8;
 
+   function To_Wide_Wide_String (S : String) return Wide_Wide_String is
+      Result : Wide_Wide_String (S'Range);
+   begin
+      for I in S'Range loop
+         Result(I) := Wide_Wide_Character'Val(Character'Pos(S(I)));
+      end loop;
+      return Result;
+   end To_Wide_Wide_String;
+
    procedure Print_Title (Content : Unbounded_String) is
    begin
       Print_Title (To_String (Content));
@@ -464,21 +473,21 @@ package body Snow is
       end if;
       
       if Chart.Title /= Null_Unbounded_String then
-         Ada.Text_IO.Put_Line(Bold & Cyan & To_String(Chart.Title) & Reset);
-         Ada.Text_IO.Put_Line("");
+         Put_Line(To_Wide_Wide_String(Bold & Cyan & To_String(Chart.Title) & Reset));
+         New_Line;
       end if;
       
       for Point of Chart.Data loop
          declare
             Bar_Length : constant Natural := 
               Natural(Float(Point.Value) * Scale);
-            Bar : constant String := 
-              To_UTF8((for I in 1 .. Bar_Length => Bar_Char)) & 
-              " " & Natural'Image(Point.Value);
+            Bar : constant Wide_Wide_String := 
+              (for I in 1 .. Bar_Length => Bar_Char) & 
+              To_Wide_Wide_String(" " & Natural'Image(Point.Value));
          begin
-            Ada.Text_IO.Put_Line(
-              To_String(Point.Label) & ": " & 
-              Green & Bar & Reset);
+            Put_Line(
+              To_Wide_Wide_String(To_String(Point.Label) & ": ") & 
+              To_Wide_Wide_String(Green) & Bar & To_Wide_Wide_String(Reset));
          end;
       end loop;
    end Print;

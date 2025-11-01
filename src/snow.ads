@@ -1,5 +1,6 @@
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with Ada.Containers.Vectors;
+with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
 
 package Snow is
    procedure Initialize_Console;
@@ -53,6 +54,7 @@ package Snow is
    function "&"
      (Left : String_Vectors.Vector; Right : String)
       return String_Vectors.Vector;
+   function To_Wide_Wide_String (S : String) return Wide_Wide_String;
 
 private
    type Alignment_Array is array (Natural range <>) of Alignment;
