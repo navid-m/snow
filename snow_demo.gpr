@@ -3,6 +3,9 @@ with "snow.gpr";
 
 project Snow_Demo is
 
+   type OS_Type is ("Windows", "Unix");
+   Target_OS : OS_Type := external ("OS", "Unix");
+
    for Source_Dirs use ("src/");
    for Object_Dir use "obj/" & Snow_Config.Build_Profile;
    for Create_Missing_Dirs use "True";
@@ -10,7 +13,14 @@ project Snow_Demo is
    for Main use ("snow_demo.adb");
 
    package Compiler is
-      for Default_Switches ("Ada") use Snow_Config.Ada_Compiler_Switches;
+      Common_Switches := Snow_Config.Ada_Compiler_Switches;
+      
+      case Target_OS is
+         when "Windows" =>
+            for Default_Switches ("Ada") use Common_Switches & ("-gnatep=platform_windows.def");
+         when "Unix" =>
+            for Default_Switches ("Ada") use Common_Switches & ("-gnatep=platform_unix.def");
+      end case;
    end Compiler;
 
    package Binder is

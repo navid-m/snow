@@ -4,10 +4,13 @@ with System;                use System;
 with Ada.Text_IO;
 with Ada.Strings.Fixed;
 with Interfaces;
+#if Windows then
 with Interfaces.C;
+#end if;
 
 package body Snow is
    procedure Initialize_Console is
+#if Windows then
       use Interfaces.C;
 
       subtype UINT is unsigned;
@@ -64,6 +67,10 @@ package body Snow is
             Result := SetConsoleMode (Console_Handle, Console_Mode);
          end if;
       end if;
+#else
+   begin
+      null;
+#end if;
    end Initialize_Console;
 
    Reset            : constant String := ASCII.ESC & "[0m";
