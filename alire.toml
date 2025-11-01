@@ -4,6 +4,6 @@ version = "0.1.0-dev"
 
 authors = ["Navid M"]
 maintainers = ["Navid M <example@example.com>"]
-licenses = "MIT OR Apache-2.0 WITH LLVM-exception"
-website = ""
+licenses = "GPL-3.0-only"
+website = "https://github.com/navid-m/snow"
 tags = []
